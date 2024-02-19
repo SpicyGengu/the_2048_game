@@ -15,7 +15,9 @@ fn main() {
             cls();
             user_input.clear();
             show(&mut board);
-            io::stdin().read_line(&mut user_input).expect("Failed to read line");
+            io::stdin()
+                .read_line(&mut user_input)
+                .expect("Failed to read line");
             user_input = user_input.trim().to_string();
         }
         if user_input == "q" {
@@ -45,7 +47,7 @@ fn cls() {
 fn show(vec: &Vec<Vec<u32>>) {
     for row in vec {
         for &element in row {
-            print!("{} ", element);
+            print!("{:^4}", element);
         }
         println!();
     }
@@ -79,26 +81,26 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
                 direction_mod_y = 1;
                 i_loop_direction = vec![board.len() as isize - 1, -1, -1];
             },
-            _ => panic!("Oh no update() match got a wrong input_direction")
+            _ => panic!("Oh no update() match got a wrong input_direction"),
         }
         
         let mut i = i_loop_direction[0];
         while i != i_loop_direction[1] {
             let mut j = j_loop_direction[0];
             while j != j_loop_direction[1] {
-                if board[i as usize][j as usize] > 0 && is_inside_board(i as isize, j as isize, &input_direction, board.len() as isize) {
-                    if board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == 0 {
-                        board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] = board[i as usize][j as usize];
-                        board[i as usize][j as usize] = 0;
-                        changes += 1;
-                    } else if board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == board[i as usize][j as usize]
-                    && is_inside(&vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32], &changed_tile) == false 
-                    && is_inside(&vec![i as i32, j as i32], &changed_tile) == false {
-                        changed_tile.push(vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32]);
-                        board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] *= 2;
-                        board[i as usize][j as usize] = 0;
-                        changes += 1;
-                    }
+                if board[i as usize][j as usize] > 0 && is_inside_board(i, j, &input_direction, board.len() as isize)
+                && board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == 0 {
+                    board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] = board[i as usize][j as usize];
+                    board[i as usize][j as usize] = 0;
+                    changes += 1;
+                } else if board[i as usize][j as usize] > 0 && is_inside_board(i, j, &input_direction, board.len() as isize)
+                && board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == board[i as usize][j as usize]
+                && is_inside(&vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32], &changed_tile) == false 
+                && is_inside(&vec![i as i32, j as i32], &changed_tile) == false {
+                    changed_tile.push(vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32]);
+                    board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] *= 2;
+                    board[i as usize][j as usize] = 0;
+                    changes += 1;
                 }
                 j += j_loop_direction[2];
             }
@@ -109,7 +111,7 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
         }
     }
     if has_changed {
-        spawn_new_block(board)
+        spawn_new_block(board);
     }
 }
 
