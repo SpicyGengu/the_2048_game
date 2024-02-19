@@ -1,5 +1,6 @@
 use std::io;
 use rand::Rng;
+use std::process::Command;
 
 fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
@@ -11,6 +12,7 @@ fn main() {
     while !win_condition(&mut board) {
         let mut user_input = String::new();
         while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" {
+            cls();
             show(&mut board);
             io::stdin().read_line(&mut user_input).expect("Failed to read line");
             user_input = match user_input.trim().parse() {
@@ -27,6 +29,19 @@ fn main() {
     match win_condition(&mut board) {
         true => print!("YOU WIN"),
         false => print!("YOU LOSE"),
+    }
+}
+
+fn cls() {
+    if cfg!(windows) {
+        Command::new("cmd")
+            .args(&["/C", "cls"])
+            .status()
+            .expect("Failed to clear screen");
+    } else {
+        Command::new("clear")
+            .status()
+            .expect("Failed to clear screen");
     }
 }
 
@@ -126,9 +141,8 @@ fn spawn_new_block(board: &mut Vec<Vec<u32>>) {
     }
     let random_index = rand::thread_rng().gen_range(0..legal_spawn_vector.len());
     let (new_row, new_col) = legal_spawn_vector[random_index];
-
     let value = if rand::thread_rng().gen_range(1..=10) == 1 { 4 } else { 2 };
-
+    
     board[new_row as usize][new_col as usize] = value;
 }
 
