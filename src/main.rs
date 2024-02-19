@@ -13,17 +13,14 @@ fn main() {
         let mut user_input = String::new();
         while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" {
             cls();
+            user_input.clear();
             show(&mut board);
             io::stdin().read_line(&mut user_input).expect("Failed to read line");
-            user_input = match user_input.trim().parse() {
-                Ok(out) => out,
-                Err(_) => continue,
-            };
+            user_input = user_input.trim().to_string();
         }
         if user_input == "q" {
             break;
         }
-
         update(user_input, &mut board);
     }
     match win_condition(&mut board) {
