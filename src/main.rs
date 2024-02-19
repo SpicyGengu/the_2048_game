@@ -50,37 +50,30 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
         let mut i_loop_direction:Vec<isize> = vec![0, board.len() as isize, 1];
         let mut j_loop_direction:Vec<isize> = vec![0, board.len() as isize, 1];
 
-        if input_direction == "a" {
-            direction_mod_x = -1;
-            j_loop_direction = vec![0, board.len() as isize, 1];
-        }
-
-        if input_direction == "d" {
-            direction_mod_x = 1;
-            j_loop_direction = vec![board.len() as isize - 1, -1, -1];
-        }
-
-        if input_direction == "w" {
-            direction_mod_y = -1;
-            i_loop_direction = vec![0, board.len() as isize, 1];
-        }
-
-        if input_direction == "s" {
-            direction_mod_y = 1;
-            i_loop_direction = vec![board.len() as isize - 1, -1, -1];
+        match input_direction.as_str() {
+            "a" => {
+                direction_mod_x = -1;
+                j_loop_direction = vec![0, board.len() as isize, 1];
+            },
+            "d" => {
+                direction_mod_x = 1;
+                j_loop_direction = vec![board.len() as isize - 1, -1, -1];
+            },
+            "w" => {
+                direction_mod_y = -1;
+                i_loop_direction = vec![0, board.len() as isize, 1];
+            },
+            "s" => {
+                direction_mod_y = 1;
+                i_loop_direction = vec![board.len() as isize - 1, -1, -1];
+            },
+            _ => panic!("Oh no update() match got a wrong input_direction")
         }
         
-        //this usize shit might get fucky (spoiler: it did)
         let mut i = i_loop_direction[0];
-        loop {
-            if i == i_loop_direction[1] {
-                break;
-            }
+        while i != i_loop_direction[1] {
             let mut j = j_loop_direction[0];
-            loop {
-                if j == j_loop_direction[1] {
-                    break;
-                }
+            while j != j_loop_direction[1] {
                 if board[i as usize][j as usize] > 0 && is_inside_board(i as isize, j as isize, &input_direction, board.len() as isize) {
                     if board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == 0 {
                         board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] = board[i as usize][j as usize];
