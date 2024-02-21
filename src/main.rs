@@ -1,6 +1,9 @@
 use std::io;
 use rand::Rng;
 use std::process::Command;
+use std::thread;
+use std::time::Duration;
+use std::io::Write;
 
 fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
@@ -31,6 +34,7 @@ fn main() {
         true => print!("YOU WIN"),
         false => print!("YOU LOSE"),
     }
+    wait_for(2);
 }
 
 fn cls() {
@@ -164,4 +168,9 @@ fn has_compatible_neighbours(coordinates: &Vec<usize>, vec: &Vec<Vec<u32>>) -> b
 
 fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
     vec.iter().enumerate().any(|(i, row)| row.iter().enumerate().any(|(j, _)| has_compatible_neighbours(&vec![i, j], vec)))
+}
+
+fn wait_for(sec: u64) {
+    io::stdout().flush().unwrap();
+    thread::sleep(Duration::from_secs(sec));
 }
