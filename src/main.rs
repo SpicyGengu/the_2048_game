@@ -49,7 +49,7 @@ fn cls() {
 fn show(vec: &Vec<Vec<u32>>) {
     for row in vec {
         for &element in row {
-            print!("{:^4}", element);
+            print!("{:^5}", element);
         }
         println!();
     }
