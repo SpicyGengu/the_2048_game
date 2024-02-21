@@ -9,7 +9,7 @@ fn main() {
         spawn_new_block(&mut board);
     }
 
-    while !win_condition(&mut board) {
+    while !win_condition(&mut board) && playable_move_exists(&board) {
         let mut user_input = String::new();
         while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" {
             cls();
@@ -25,6 +25,8 @@ fn main() {
         }
         update(user_input, &mut board);
     }
+    cls();
+    show(&mut board);
     match win_condition(&mut board) {
         true => print!("YOU WIN"),
         false => print!("YOU LOSE"),
@@ -147,4 +149,29 @@ fn spawn_new_block(board: &mut Vec<Vec<u32>>) {
 
 fn win_condition(vec: &Vec<Vec<u32>>) -> bool {
     vec.iter().any(|row| row.iter().any(|&element| element >= 2048))
+}
+
+fn has_compatible_neighbours(coordinates: &Vec<usize>, vec: &Vec<Vec<u32>>) -> bool {
+    if coordinates[0] > 0 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]-1][coordinates[1]]
+    || coordinates[0] < vec.len() - 1 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]+1][coordinates[1]]
+    || coordinates[1] > 0 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]][coordinates[1]-1]
+    || coordinates[1] < vec.len() - 1 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]][coordinates[1]+1]
+    || coordinates[0] > 0 && vec[coordinates[0]-1][coordinates[1]] == 0
+    || coordinates[0] < vec.len() - 1 && vec[coordinates[0]+1][coordinates[1]] == 0
+    || coordinates[1] > 0 && vec[coordinates[0]][coordinates[1]-1] == 0
+    || coordinates[1] < vec.len() - 1 && vec[coordinates[0]][coordinates[1]+1] == 0 {
+        return true;
+    }
+    return false;
+}
+
+fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
+    for _i in 0..=vec.len() - 1 {
+        for _j in 0..=vec[_i].len() - 1 {
+            if has_compatible_neighbours(&vec![_i, _j], vec) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
