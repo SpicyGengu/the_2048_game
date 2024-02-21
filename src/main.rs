@@ -132,19 +132,16 @@ fn is_inside(coordinates: &Vec<i32>, vec: &Vec<Vec<i32>>) -> bool {
 }
 
 fn spawn_new_block(board: &mut Vec<Vec<u32>>) {
-    let mut legal_spawn_vector: Vec<(isize, isize)> = Vec::new();
-    for row in 0..board.len() {
-        for element in 0..board[row].len() {
-            if board[row][element] == 0 {
-                legal_spawn_vector.push((row as isize, element as isize));
-            }
-        }
-    }
+    let legal_spawn_vector: Vec<(usize, usize)> = (0..board.len())
+        .flat_map(|row| (0..board[row].len()).map(move |col| (row, col)))
+        .filter(|&(row, col)| board[row][col] == 0)
+        .collect();
+
     let random_index = rand::thread_rng().gen_range(0..legal_spawn_vector.len());
     let (new_row, new_col) = legal_spawn_vector[random_index];
     let value = if rand::thread_rng().gen_range(1..=10) == 1 { 4 } else { 2 };
-    
-    board[new_row as usize][new_col as usize] = value;
+
+    board[new_row][new_col] = value;
 }
 
 fn win_condition(vec: &Vec<Vec<u32>>) -> bool {
@@ -166,12 +163,5 @@ fn has_compatible_neighbours(coordinates: &Vec<usize>, vec: &Vec<Vec<u32>>) -> b
 }
 
 fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
-    for _i in 0..=vec.len() - 1 {
-        for _j in 0..=vec[_i].len() - 1 {
-            if has_compatible_neighbours(&vec![_i, _j], vec) {
-                return true;
-            }
-        }
-    }
-    return false;
+    vec.iter().enumerate().any(|(i, row)| row.iter().enumerate().any(|(j, _)| has_compatible_neighbours(&vec![i, j], vec)))
 }
