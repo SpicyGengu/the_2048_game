@@ -1,9 +1,5 @@
-use std::io;
+use std::{io::{self, Write}, process::Command, thread, time::Duration};
 use rand::Rng;
-use std::process::Command;
-use std::thread;
-use std::time::Duration;
-use std::io::Write;
 
 fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
