@@ -1,5 +1,6 @@
 use std::{io::{self, Write}, process::Command, thread, time::Duration};
 use rand::Rng;
+use colored::Colorize;
 
 fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
@@ -49,7 +50,25 @@ fn cls() {
 fn show(vec: &Vec<Vec<u32>>) {
     for row in vec {
         for &element in row {
-            print!("{:^5}", element);
+            let text_color: Vec<u8> = if element > 4 {vec![250, 245, 240]} else {vec![120, 110, 100]};
+            let bg_color: Vec<u8> = {
+            match element {
+                2 => vec![240, 230, 220],
+                4 => vec![240, 225, 200],
+                8 => vec![240, 180, 120],
+                16 => vec![245, 150, 100],
+                32 => vec![245, 125, 95],
+                64 => vec![245, 95, 55],
+                128 => vec![240, 210, 115],
+                256 => vec![240, 205, 100],
+                512 => vec![240, 200, 80],
+                1024 => vec![240, 200, 60],
+                2048 => vec![240, 195, 40],
+                _ => vec![60, 54, 48]
+            }};
+            print!("{:^5}", element.to_string()
+                .truecolor(text_color[0], text_color[1], text_color[2])
+                .on_truecolor(bg_color[0], bg_color[1], bg_color[2]));
         }
         println!();
     }
