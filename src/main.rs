@@ -28,8 +28,8 @@ fn main() {
     cls();
     show(&mut board);
     match win_condition(&mut board) {
-        true => print!("YOU WIN"),
-        false => print!("YOU LOSE"),
+        true => print!("{}", "YOU WIN".green()),
+        false => print!("{}", "YOU LOSE".red()),
     }
     wait_for(2);
 }
