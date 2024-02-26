@@ -64,7 +64,7 @@ fn show(vec: &Vec<Vec<u32>>) {
                 512 => vec![240, 200, 80],
                 1024 => vec![240, 200, 60],
                 2048 => vec![240, 195, 40],
-                _ => vec![60, 54, 48]
+                _ => vec![60, 55, 50]
             }};
             print!("{:^5}", element.to_string()
                 .truecolor(text_color[0], text_color[1], text_color[2])
