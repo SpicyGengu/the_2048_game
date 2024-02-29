@@ -1,9 +1,11 @@
 use std::{io::{self, Write}, process::Command, thread, time::Duration};
 use rand::Rng;
 use colored::Colorize;
+use device_query::{DeviceQuery, DeviceState, Keycode};
 
 fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
+    let device_state = DeviceState::new();
     
     for _i in 0..2 {
         spawn_new_block(&mut board);
@@ -15,10 +17,14 @@ fn main() {
             cls();
             user_input.clear();
             show(&mut board);
-            io::stdin()
-                .read_line(&mut user_input)
-                .expect("Failed to read line");
-            user_input = user_input.trim().to_string();
+            loop {
+                let keys: Vec<Keycode> = device_state.get_keys();
+                if !keys.is_empty(){
+                    user_input = keys[0].to_string().to_lowercase();
+                    break;
+                }
+            }
+            wait_for(200);
         }
         if user_input == "q" {
             break;
@@ -31,7 +37,7 @@ fn main() {
         true => print!("{}", "YOU WIN".green()),
         false => print!("{}", "YOU LOSE".red()),
     }
-    wait_for(2);
+    wait_for(2000);
 }
 
 fn cls() {
@@ -185,7 +191,7 @@ fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
     vec.iter().enumerate().any(|(i, row)| row.iter().enumerate().any(|(j, _)| has_compatible_neighbours(&vec![i, j], vec)))
 }
 
-fn wait_for(sec: u64) {
+fn wait_for(millis: u64) {
     io::stdout().flush().unwrap();
-    thread::sleep(Duration::from_secs(sec));
+    thread::sleep(Duration::from_millis(millis));
 }
