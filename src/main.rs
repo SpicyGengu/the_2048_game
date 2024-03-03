@@ -16,7 +16,7 @@ fn main() {
         while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" {
             cls();
             user_input.clear();
-            show(&mut board);
+            show(&board);
             loop {
                 let keys: Vec<Keycode> = device_state.get_keys();
                 if !keys.is_empty(){
@@ -32,8 +32,8 @@ fn main() {
         update(user_input, &mut board);
     }
     cls();
-    show(&mut board);
-    match win_condition(&mut board) {
+    show(&board);
+    match win_condition(&board) {
         true => print!("{}", "YOU WIN".green()),
         false => print!("{}", "YOU LOSE".red()),
     }
@@ -43,7 +43,7 @@ fn main() {
 fn cls() {
     if cfg!(windows) {
         Command::new("cmd")
-            .args(&["/C", "cls"])
+            .args(["/C", "cls"])
             .status()
             .expect("Failed to clear screen");
     } else {
@@ -122,8 +122,8 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
                     changes += 1;
                 } else if board[i as usize][j as usize] > 0 && is_inside_board(i, j, &input_direction, board.len() as isize)
                 && board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] == board[i as usize][j as usize]
-                && is_inside(&vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32], &changed_tile) == false 
-                && is_inside(&vec![i as i32, j as i32], &changed_tile) == false {
+                && !is_inside(&vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32], &changed_tile) 
+                && !is_inside(&vec![i as i32, j as i32], &changed_tile) {
                     changed_tile.push(vec![(i + direction_mod_y) as i32, (j + direction_mod_x) as i32]);
                     board[(i + direction_mod_y) as usize][(j + direction_mod_x) as usize] *= 2;
                     board[i as usize][j as usize] = 0;
@@ -142,17 +142,17 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
     }
 }
 
-fn is_inside_board(i: isize, j: isize, input_direction: &String, board_l: isize) -> bool {
-    match input_direction.as_str() {
-        "a" => j - 1 >= 0,
+fn is_inside_board(i: isize, j: isize, input_direction: &str, board_l: isize) -> bool {
+    match input_direction {
+        "a" => j > 0,
         "d" => j + 1 < board_l,
-        "w" => i - 1 >= 0,
+        "w" => i > 0,
         "s" => i + 1 < board_l,
         _ => false,
     }
 }
 
-fn is_inside(coordinates: &Vec<i32>, vec: &Vec<Vec<i32>>) -> bool {
+fn is_inside(coordinates: &Vec<i32>, vec: &[Vec<i32>]) -> bool {
     vec.iter().any(|element| element == coordinates)
 }
 
@@ -169,11 +169,11 @@ fn spawn_new_block(board: &mut Vec<Vec<u32>>) {
     board[new_row][new_col] = value;
 }
 
-fn win_condition(vec: &Vec<Vec<u32>>) -> bool {
+fn win_condition(vec: &[Vec<u32>]) -> bool {
     vec.iter().any(|row| row.iter().any(|&element| element >= 2048))
 }
 
-fn has_compatible_neighbours(coordinates: &Vec<usize>, vec: &Vec<Vec<u32>>) -> bool {
+fn has_compatible_neighbours(coordinates: &[usize], vec: &Vec<Vec<u32>>) -> bool {
     if coordinates[0] > 0 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]-1][coordinates[1]]
     || coordinates[0] < vec.len() - 1 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]+1][coordinates[1]]
     || coordinates[1] > 0 && vec[coordinates[0]][coordinates[1]] == vec[coordinates[0]][coordinates[1]-1]
@@ -184,7 +184,7 @@ fn has_compatible_neighbours(coordinates: &Vec<usize>, vec: &Vec<Vec<u32>>) -> b
     || coordinates[1] < vec.len() - 1 && vec[coordinates[0]][coordinates[1]+1] == 0 {
         return true;
     }
-    return false;
+    false
 }
 
 fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
