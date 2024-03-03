@@ -188,7 +188,7 @@ fn has_compatible_neighbours(coordinates: &[usize], vec: &Vec<Vec<u32>>) -> bool
 }
 
 fn playable_move_exists(vec: &Vec<Vec<u32>>) -> bool {
-    vec.iter().enumerate().any(|(i, row)| row.iter().enumerate().any(|(j, _)| has_compatible_neighbours(&vec![i, j], vec)))
+    vec.iter().enumerate().any(|(i, row)| row.iter().enumerate().any(|(j, _)| has_compatible_neighbours(&[i, j], vec)))
 }
 
 fn wait_for(millis: u64) {
