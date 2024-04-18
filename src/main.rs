@@ -7,7 +7,7 @@ fn main() {
     let mut board:Vec<Vec<u32>> = vec![vec![0; 4]; 4];
     let device_state = DeviceState::new();
     
-    for _i in 0..2 {
+    for _ in 0..2 {
         spawn_new_block(&mut board);
     }
 
