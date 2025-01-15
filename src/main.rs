@@ -13,7 +13,7 @@ fn main() {
 
     while !win_condition(&board) && playable_move_exists(&board) {
         let mut user_input = String::new();
-        while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" {
+        while user_input != "a" && user_input != "w" && user_input != "s" && user_input != "d" && user_input != "q" && user_input != "r" {
             cls();
             user_input.clear();
             show(&board);
@@ -26,8 +26,18 @@ fn main() {
             }
             wait_for(175);
         }
+        
+        // Quit game
         if user_input == "q" {
             break;
+        }
+        
+        // Game reset
+        if user_input == "r" {
+            board = vec![vec![0; 4]; 4];
+            for _ in 0..2 {
+                spawn_new_block(&mut board);
+            }
         }
         update(user_input, &mut board);
     }
@@ -108,6 +118,7 @@ fn update(input_direction: String, board: &mut Vec<Vec<u32>>) {
                 direction_mod_y = 1;
                 i_loop_direction = vec![board.len() as isize - 1, -1, -1];
             },
+            "r" => {},
             _ => panic!("Oh no update() match got a wrong input_direction"),
         }
         
